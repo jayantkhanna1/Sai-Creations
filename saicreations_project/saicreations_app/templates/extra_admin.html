@@ -1,0 +1,68 @@
+{%load static%}
+{%block content1%}
+<!-- Sidebar -->
+<div id="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()"> &times;</a><br>
+    <a href="admin"  style="font-size: 18px !important;">Home</a><br>
+    <a href="addproductpage"  style="font-size: 18px !important;">Products</a><br>
+    <a href="adminseeorders" style="font-size: 18px !important;">See Orders</a><br>
+</div>
+{%endblock%}
+
+{% block content2 %}
+<!-- Admin Header -->
+<div id="header">
+    <div id="menu_open">
+        <a href="#" id ="side-opener" onclick="openNav()"><img id="menu_open" src="{%static 'img/menu_open.svg'%}" alt=""></a>
+    </div>
+    
+    <div id="search">
+        <img src="{%static 'img/Search.svg'%}" alt="">
+        <input placeholder="Search" type="text" name="search" id="search_bar">
+    </div>
+    <div id="sideoptions">
+        <a href="admin" style="text-decoration: none;"><div><img src="{%static 'img/admin_user.svg'%}" alt=""><p>
+            {{member.name}}
+        </p></div></a>
+    </div>
+</div>
+<div id="mid">
+    <div class="card" id="card1">
+        <div>
+            Behind every team <br> is a <span> great</span> leader
+            <div class="elipse1"></div>
+            <div class="elipse2"></div>
+        </div>
+    </div>
+    <div class="card" id="card2">
+        <div>
+            You manage team <br> you <span> Lead</span> people
+            <div class="elipse1"></div>
+            <div class="elipse2"></div>
+        </div>
+    </div>
+    <div class="card" id="card3">
+        <div>
+            A leader is a  <br>
+            dealer in <span> Hope </span>
+            <div class="elipse1"></div>
+            <div class="elipse2"></div>
+        </div>
+    </div>
+    <div class="card" id="card4">
+        <div>
+            None of us is as <br> smart as <span> all</span> of us
+            <div class="elipse1"></div>
+            <div class="elipse2"></div>
+        </div>
+    </div>
+    <div class="card" id="card5">
+        <div>
+            <span>Leadership</span> is
+            <br> action not position
+            <div class="elipse3"></div>
+            <div class="elipse4"></div>
+        </div>
+    </div>
+</div>
+{%endblock%}

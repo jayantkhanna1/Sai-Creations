@@ -1,0 +1,407 @@
+{%load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Meta tags -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title -->
+    <title>Admin</title>
+
+    <!-- Local styling -->
+    <link rel="stylesheet" href="{%static 'css/admin.css'%}">
+    <script src="{%static 'js/admin.js'%}"></script>
+    <!-- <link rel="stylesheet" href="{%static 'css/admin_team_login.css'%}"> -->
+    
+    <!-- Google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Akaya+Telivigala&family=Poppins:wght@300&family=Roboto:wght@300&display=swap" rel="stylesheet">
+
+    <!-- For jquery and ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <style>
+        .user-box input ~label,
+        .user-box input ~label {
+            top: -25px;
+            left: 33px;
+            color: #7E7D7D;
+            font-size: 16px;
+        }
+        #edit_button{
+            background: linear-gradient(268.06deg, rgba(179, 114, 245, 0.53) 34.48%, rgba(204, 68, 153, 0.3922) 96.29%);
+            outline: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 18px;
+            margin-left: 305px;
+            padding: 20px 40px;
+        }
+    </style>
+    
+</head>
+<body id="main_body">
+    <div id="darken">
+        {%include 'extra_admin.html'%}
+        {%block content2%}
+        {%endblock%}
+
+    <!-- Block content 1 to be replaced later -->
+    <div id="team_details">
+        <h2 id="team_details_heading">Product details</h2>
+        <a href="addproductpage" style="text-decoration: none;" id="add_team_button">Add Product</a>
+    </div>
+
+    <!-- Team details table -->
+    <div id="team">
+    <table >
+        <thead>
+            <tr>
+                <th class="table_name">Name</th>
+                <th class="table_email">Description</th>
+                <th class="table_phone">Price</th>
+                <th class="table_view">View</th>
+                <th class="table_delete">Delete</th>
+            </tr>
+        </thead>
+        <tbody id="productdetails">
+            {%for x in products%}
+            <tr>
+                <td>{{x.name}}</td>
+                <td>{{x.desc}}</td>
+                <td>{{x.price}}</td> 
+                
+                <td><img class="view" src="{%static 'images/view.svg'%}" onclick="view_open_modal('{{x.id}}','{{x.name}}','{{x.price}}','{{x.tags}}','{{x.features}}','{{x.desc}}','{{x.quantity}}','{{x.brand}}','{{x.category}}','{{x.discount}}')" alt=""></td>
+                
+                <td><img class="delete" src="{%static 'images/delete.svg'%}" onclick="open_modal('{{x.name}}','{{x.id}}')" alt=""></td>
+            </tr>
+            {%endfor%}
+        </tbody>
+    </table>
+</div>
+</div>
+
+<script>
+    function disablethisproduct(id){
+        $.ajax({
+                url: "disableproduct",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    id: id,
+                },
+                success: function(data){
+                    location.reload()
+                },
+                error: function(data){
+                    location.reload()
+                }
+            });
+    }
+</script>
+<script>
+function enablethisproduct(id){
+    $.ajax({
+            url: "enableproduct",
+            type: "POST",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                id: id,
+            },
+            success: function(data){
+                location.reload()
+            },
+            error: function(data){
+                location.reload()
+            }
+        });
+}
+</script>
+<script>
+$(document).ready(function(){
+  $("#search_bar").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    console.log(value);
+    $("#productdetails tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+
+</script>
+<!-- Team Delete modal -->
+<div id="delete_modal" class="">
+    <div id="header_modal">
+        <p  onclick="close_modal()">&times;</p>
+    </div>
+
+    <div id="confirmation">
+        Are you sure you want to delete product '<span id="productdeletemodal"></span>' with id=<span id="productdeleteid"></span> from database <br>
+        Change will be permanent
+    </div>
+    <div id="confirmation_button">
+        <input type="submit" onclick="deleteproductfromdatabase()" value="Delete">
+    </div>
+</div>
+
+<!-- Edit team modal -->
+
+<div id="edit_modal">
+    <div id="header_modal">
+        <p  onclick="close_modal()">&times;</p>
+    </div>
+    <div id="edit_body">
+        <form action="javascript:void(0)" method="POST" enctype="application/x-www-form-urlencoded">
+            {%csrf_token%}
+            <input type="hidden" name="id" readonly id="edit_id">
+            <div class="flex">
+                <div class="user-box">
+                    <input name="input_usernamebox" id="name" type="text" required="">
+                    <label>Name</label>
+                </div>
+                <div class="user-box">
+                    <input name="input_lastname" id="price"  type="text"required="">
+                    <label>Price</label>
+                </div>
+                <div class="user-box">
+                    <input name="input_email" id="tags"  type="text" required="">
+                    <label>Tags</label>
+                </div>
+            </div>
+
+            <div class="flex">
+                <div class="user-box">
+                    <input name="input_passwordbox" id="quantity" type="text" name="idd" required="">
+                    <label>Quantity</label>
+                </div>
+                <div class="user-box">
+                    <input name="input_number" id="features" type="text" required="">
+                    <label>Features</label>
+                </div>
+                <div class="user-box">
+                    <input name="input_dob" id="discount" type="text" required="">
+                    <label>Discount</label>
+                </div>
+            </div>
+
+            <div class="flex">
+                <div class="user-box">
+                    <input name="input_passwordbox" id="category" type="text" name="idd" required="">
+                    <label>Category</label>
+                    </div>
+                <div class="user-box">
+                    <input name="input_text" id="brand" type="text" required="">
+                    <label>Brand</label>
+                    </div>
+                
+            </div>
+
+            <div class="flex" id="final_flex">
+                <div class="user-box">
+                    <input name="input_country" id="description" type="text" name="idd" required="">
+                    <label>Description</label>
+            </div>
+            </div>
+            <button id="edit_button" onclick="edit_product_details()">Edit</button>
+        </form>
+    </div>
+</div>
+
+<!-- View team details modal -->
+
+<div id="view_modal">
+    <div id="header_modal">
+        <p  onclick="close_modal()">&times;</p>
+    </div>
+    <div id="edit_body">
+        <form action="#" method="POST" enctype="application/x-www-form-urlencoded">
+            {%csrf_token%}
+            <div class="flex">
+                <div class="user-box">
+                    <input name="input_usernamebox" readonly id="name_view" type="text" required="">
+                    <label>Name</label>
+                </div>
+                <div class="user-box">
+                    <input name="input_lastname" id="price_view" readonly type="text"required="">
+                    <label>Price</label>
+                </div>
+                <div class="user-box">
+                    <input name="input_email" id="tags_view" readonly type="text" required="">
+                    <label>Tags</label>
+                </div>
+            </div>
+
+            <div class="flex">
+                <div class="user-box">
+                    <input name="input_passwordbox" id="quantity_view" readonly type="text" name="idd" required="">
+                    <label>Quantity</label>
+                </div>
+                <div class="user-box">
+                    <input name="input_number" id="features_view" readonly type="text" required="">
+                    <label>Features</label>
+                </div>
+                <div class="user-box">
+                    <input name="input_dob" id="discount_view" readonly type="text" required="">
+                    <label>Discount</label>
+                </div>
+            </div>
+
+            <div class="flex">
+                <div class="user-box">
+                    <input name="input_passwordbox" id="category_view" readonly type="text" name="idd" required="">
+                    <label>Category</label>
+                    </div>
+                <div class="user-box">
+                    <input name="input_text" id="brand_view" readonly type="text" required="">
+                    <label>Brand</label>
+                    </div>
+                
+            </div>
+
+            <div class="flex" id="final_flex">
+                <div class="user-box">
+                    <input name="input_country" id="description_view" readonly type="text" name="idd" required="">
+                    <label>Description</label>
+            </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<!-- Add team member modal -->
+<div id="add_team_modal">
+    <div id="header_modal">
+        <p  onclick="close_modal()">&times;</p>
+    </div>
+    <div id="edit_body">
+        <form action="" method="POST" enctype="application/x-www-form-urlencoded">
+            <div class="flex">
+                <div class="user-box">
+                    <input name="input_usernamebox" id="input_firstname" type="text" required="">
+                    <label>Name</label>
+                    <img src="{%static 'images/User.svg'%}" id="login_userlogo" style="margin-top: 6px;" alt="user" width="35" height="35" />
+                </div>
+                <div class="user-box">
+                    <input name="input_lastname" id="input_lastname" type="text"required="">
+                    <label>Details</label>
+                    <img src="{%static 'images/User.svg'%}" id="login_userlogo" alt="user" width="35" height="35" />
+                </div>
+                <div class="user-box">
+                    <input name="input_email" id="input_email" type="text" required="">
+                    <label>Price</label>
+                    <img src="{%static 'images/At sign.svg'%}" id="login_userlogo" alt="user" width="35" height="35" />
+                </div>
+            </div>
+
+            <div class="flex">
+                <div class="user-box">
+                    <input name="input_passwordbox" id="input_passwordbox" type="text" name="idd" required="">
+                    <label>In Stock</label>
+                    <img src="{%static 'images/Lock.svg'%}" id="login_passwordlogo" style="margin-left: 4px;" alt="user" width="40" height="40" />
+                </div>
+            </div>
+
+            
+
+            
+
+        </form>
+    </div>
+</div>
+<script>
+    function edit_open_modal(id,name,price,tags,features,desc,quantity,brand,category,discount){
+        document.getElementById('name').value=name;
+        document.getElementById('price').value=price;
+        document.getElementById('tags').value=tags;
+        document.getElementById('edit_id').value=id;
+        document.getElementById('quantity').value=quantity;
+        features  = features.replaceAll('||',',')
+        document.getElementById('features').value=features;
+        document.getElementById('discount').value=discount;
+        document.getElementById('category').value=category;
+        document.getElementById('brand').value=brand;
+        document.getElementById('description').value=desc;
+        document.getElementById('edit_modal').style.display='block';
+        document.getElementById('darken').style.overflow="hidden";
+        document.getElementById('darken').style.opacity="0.4";
+}
+</script>
+<script>
+    function deleteproductfromdatabase(){
+        productdeleteid=document.getElementById('productdeleteid').innerHTML;
+        $.ajax({
+                url: "deleteproductfromdatabase",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    id: productdeleteid,
+                },
+                success: function(data){
+                    location.reload()
+                },
+                error: function(data){
+                    location.reload()
+                }
+            });
+    }
+</script>
+<script>
+    function view_open_modal(id,name,price,tags,features,desc,quantity,brand,category,discount){
+    console.log(name)
+    document.getElementById('name_view').value=name;
+    document.getElementById('price_view').value=price;
+    document.getElementById('tags_view').value=tags;
+    document.getElementById('quantity_view').value=quantity;
+    features  = features.replaceAll('||',',')
+    document.getElementById('features_view').value=features;
+    document.getElementById('discount_view').value=discount;
+    document.getElementById('category_view').value=category;
+    document.getElementById('brand_view').value=brand;
+    document.getElementById('description_view').value=desc;
+    document.getElementById("view_modal").style.display='block';
+    document.getElementById('darken').style.overflow="hidden";
+    document.getElementById('darken').style.opacity="0.4";
+
+}
+</script>
+
+<script>
+    function edit_product_details(){
+        id = document.getElementById('edit_id').value;
+        features= document.getElementById('features').value;
+        features = features.replaceAll(',','||')
+        $.ajax({
+                url: "edit_product_details",
+                type: "POST",
+                data: {
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    id: id,
+                    name: document.getElementById('name').value,
+                    price: document.getElementById('price').value,
+                    tags: document.getElementById('tags').value,
+                    features: features,
+                    quantity: document.getElementById('quantity').value,
+                    discount: document.getElementById('discount').value,
+                    category: document.getElementById('category').value,
+                    brand: document.getElementById('brand').value,
+                    description: document.getElementById('description').value,
+
+                },
+                success: function(data){
+                    location.reload()
+                },
+                error: function(data){
+                    location.reload()
+                }
+            });
+    }
+</script>
+
+</body>
+</html>
