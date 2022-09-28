@@ -23,8 +23,9 @@ urlpatterns = [
     path('aboutus',views.about,name = "about"),
     path('contact',views.contact,name = "contact"),
     path('admin_login',views.admin_login,name = "admin_login"),
-    path('admin',views.admin,name = "admin"),
+    path('admin_verified',views.admin_verified,name = "admin_verified"),
     path('login_admin',views.login_admin,name = "login_admin"),
     path('addproductpage',views.addproductpage,name= "addproductpage"),
     path('adminseeorders',views.adminseeorders,name= "adminseeorders"),
+    path('add_product_to_database',views.add_product_to_database,name= "add_product_to_database"),
 ]

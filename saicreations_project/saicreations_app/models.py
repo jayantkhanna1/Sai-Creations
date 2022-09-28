@@ -9,7 +9,7 @@ class Product(models.Model):
     name = models.CharField(max_length=100)
     price = models.IntegerField()
     description = models.TextField()
-    image = models.ImageField(upload_to='images/')
+    image = models.CharField(max_length=1000)
 
 class Admin(models.Model):
     email = models.EmailField(max_length=254)

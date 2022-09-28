@@ -1,6 +1,6 @@
 function close_modal(){
     document.getElementById('delete_modal').style.display='none';
-    document.getElementById('edit_modal').style.display='none';
+    //document.getElementById('edit_modal').style.display='none';
     document.getElementById("view_modal").style.display='none';
     document.getElementById("add_team_modal").style.display='none';
     document.getElementById('darken').style.overflow="auto";
